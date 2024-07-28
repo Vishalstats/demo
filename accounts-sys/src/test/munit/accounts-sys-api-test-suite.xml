@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="accounts-sys-api-test-suite.xml" />
+	<munit:test name="accounts-sys-api-test" doc:id="fb055de2-3e33-4e46-88ad-7b3afb6efc86" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="37075a1a-c1c8-4327-80a1-e58eba0fcfcf" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="accounts-sys-api-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="7be18c7c-e3aa-4587-87ef-8d13f783f980" >
+				<munit:payload value='#[MunitTools::getResourceAsString("sample/request.json")]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to accounts-sys-api-main" doc:id="b4ad5ed2-90fc-4398-ade9-6915d61c48a1" name="accounts-sys-api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6f9d4736-02f3-49c5-8b34-8bb5f420f08c" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="accounts-sys-api-test-suite-post:\account:application\json:accounts-sys-api-configTest" doc:id="6a634e1b-3357-40bd-a822-4b1faf56b92c" description="Test">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="eec19db6-c6a8-4e7f-a1b6-fa40b6cf440e" >
+				<munit:attributes value='#[{queryParams:{branchName:"Baramati"}}]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to post:\account:application\json:accounts-sys-api-config" doc:id="87a8dd4d-028f-462b-88f4-eda99ba5905f" name="post:\account:application\json:accounts-sys-api-config"/>
+			<munit-tools:verify-call doc:name="Verify call" doc:id="923ff8b0-0d7c-42be-a83e-ceda9f110ec8" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="branch-update" attributeName="doc:name" />
+					<munit-tools:with-attribute whereValue="0269de03-a5de-49eb-9432-68c9b93b4979" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="5ec82f16-0d80-4838-9793-ef2ca9e06937" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
